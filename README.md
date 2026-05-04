@@ -1,136 +1,135 @@
-# RAG 智能問答平台
+# RAG Smart Q&A Platform
 
-基於 RAG（Retrieval-Augmented Generation）技術的智能文件問答系統。上傳 PDF 或 TXT 文件後，系統會自動解析文件內容、建立向量索引，讓使用者可以針對文件內容進行自然語言問答，並標註答案來源。
+This is an intelligent document question-answering system based on RAG (Retrieval-Augmented Generation).
+After uploading PDF or TXT files, the system automatically parses document content and builds vector indexes, allowing users to ask natural language questions about the documents with source-annotated answers.
 
-## 技術棧
+## Tech Stack
 
-### 後端
+### Backend
 
-- **框架**：Next.js 16（App Router）
-- **語言**：TypeScript
-- **資料庫**：Supabase（PostgreSQL + pgvector 向量搜尋）
-- **AI SDK**：Vercel AI SDK 6.x
-- **文字生成**：Google Gemini 2.5 Flash（透過 `@ai-sdk/google`）
-- **文字向量化**：Google gemini-embedding-001（3072 維度向量）
-- **PDF 解析**：unpdf（主要）+ pdf-parse（備援）
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Database**: Supabase (PostgreSQL + pgvector for vector search)
+- **AI SDK**: Vercel AI SDK 6.x
+- **Text Generation**: Google Gemini 2.5 Flash (via `@ai-sdk/google`)
+- **Text Embedding**: Google gemini-embedding-001 (3072-dimensional vectors)
+- **PDF Parsing**: unpdf (primary) + pdf-parse (fallback)
 
-### 前端
+### Frontend
 
-- **UI 框架**：React 19 + shadcn/ui
-- **樣式**：Tailwind CSS v4
-- **資料同步**：SWR
-- **圖示**：lucide-react
-- **主題**：next-themes（支援深色/淺色模式）
+- **UI Framework**: React 19 + shadcn/ui
+- **Styling**: Tailwind CSS v4
+- **Data Fetching**: SWR
+- **Icons**: lucide-react
+- **Theming**: next-themes (dark/light mode support)
 
-## 專案結構
+## Project Structure
 
 ```text
 RAG_Live/
 ├── app/
 │   ├── api/
-│   │   ├── chat/route.ts              # 聊天 API（RAG 問答）
+│   │   ├── chat/route.ts              # Chat API (RAG Q&A)
 │   │   └── documents/
-│   │       ├── route.ts               # 文件列表 GET / 刪除 DELETE
-│   │       └── upload/route.ts        # 文件上傳 POST
-│   ├── globals.css                    # 全域樣式（含深色模式）
-│   ├── layout.tsx                     # 根佈局（ThemeProvider）
-│   └── page.tsx                       # 主頁面（左右分欄）
+│   │       ├── route.ts               # Document list GET / delete DELETE
+│   │       └── upload/route.ts        # Document upload POST
+│   ├── globals.css                    # Global styles (incl. dark mode)
+│   ├── layout.tsx                     # Root layout (ThemeProvider)
+│   └── page.tsx                       # Main page (split-panel layout)
 ├── components/
-│   ├── chat-interface.tsx             # 聊天介面
-│   ├── chat-message.tsx               # 訊息渲染（含來源引用）
-│   ├── document-list.tsx              # 文件列表（含刪除確認）
-│   ├── file-upload.tsx                # 拖放上傳元件
-│   ├── theme-provider.tsx             # 主題供應器
-│   ├── theme-toggle.tsx               # 深色/淺色切換按鈕
-│   └── ui/                            # shadcn/ui 元件庫
+│   ├── chat-interface.tsx             # Chat interface
+│   ├── chat-message.tsx               # Message rendering (with source citations)
+│   ├── document-list.tsx              # Document list (with delete confirmation)
+│   ├── file-upload.tsx                # Drag-and-drop upload component
+│   ├── theme-provider.tsx             # Theme provider
+│   ├── theme-toggle.tsx               # Dark/light toggle button
+│   └── ui/                            # shadcn/ui component library
 ├── lib/
-│   ├── embedding.ts                   # 向量嵌入生成
+│   ├── embedding.ts                   # Vector embedding generation
 │   ├── supabase/
-│   │   ├── client.ts                  # 瀏覽器端 Supabase 客戶端
-│   │   └── server.ts                  # 伺服器端 Supabase 客戶端
-│   ├── text-splitter.ts               # 文字分割器
-│   ├── types.ts                       # TypeScript 型別定義
-│   └── utils.ts                       # 工具函數
+│   │   ├── client.ts                  # Browser-side Supabase client
+│   │   └── server.ts                  # Server-side Supabase client
+│   ├── text-splitter.ts               # Text splitter
+│   ├── types.ts                       # TypeScript type definitions
+│   └── utils.ts                       # Utility functions
 ├── hooks/
-│   ├── use-mobile.ts                  # 行動裝置偵測
-│   └── use-toast.ts                   # Toast 通知
-├── .env                               # 環境變數（已加入 .gitignore）
+│   ├── use-mobile.ts                  # Mobile device detection
+│   └── use-toast.ts                   # Toast notifications
+├── .env                               # Environment variables (in .gitignore)
 ├── package.json
-└── start.ps1                          # 一鍵啟動腳本
+└── start.ps1                          # One-click startup script
 ```
 
-## 環境設定
+## Setup
 
-### 1. 安裝依賴
+### 1. Install Dependencies
 
 ```bash
 pnpm install
 ```
 
-### 2. 設定環境變數
+### 2. Configure Environment Variables
 
-在專案根目錄建立 `.env` 檔案：
+Create a `.env` file in the project root:
 
 ```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# Google AI（@ai-sdk/google 預設讀取此變數名）
+# Google AI (default variable name read by @ai-sdk/google)
 GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_api_key
 ```
 
-- **Supabase**：在 [Supabase Dashboard](https://supabase.com/dashboard) > Settings > API 取得
-- **Google AI**：在 [Google AI Studio](https://aistudio.google.com/apikey) 取得
+- **Supabase**: Obtain from [Supabase Dashboard](https://supabase.com/dashboard) > Settings > API
+- **Google AI**: Obtain from [Google AI Studio](https://aistudio.google.com/apikey)
 
-### 3. Supabase 資料庫設定
+### 3. Supabase Database Setup
 
-確保 Supabase 專案中已建立：
+Ensure the following are configured in your Supabase project:
 
-1. 啟用 `pgvector` extension
-2. 建立 4 張表：`documents`、`document_chunks`、`conversations`、`messages`
-3. 建立 `match_documents` RPC 函數（向量相似度搜尋）
+1. Enable the `pgvector` extension
+2. Create 4 tables: `documents`, `document_chunks`, `conversations`, `messages`
+3. Create the `match_documents` RPC function (vector similarity search)
 
-> 詳細的資料庫結構請參考 `PROJECT_OVERVIEW.md`。
-
-### 4. 啟動開發伺服器
+### 4. Start the Development Server
 
 ```bash
 pnpm dev
 ```
 
-或使用一鍵啟動腳本（Windows PowerShell）：
+Or make it into a startup script: Create a .ps1 file and save it as a .ps1 file. Then you can double click it to start the server. For faster startup and one-click use, consider creating a desktop shortcut to this script:
 
 ```powershell
 .\start.ps1
 ```
 
-## 核心功能
+## Core Features
 
-### 文件管理
+### Document Management
 
-- 拖放或點擊上傳 PDF / TXT 文件（最大 10MB）
-- PDF 雙重解析保險：unpdf 優先，失敗時自動切換 pdf-parse
-- 上傳時自動：文字提取 → 分割（1000 字元/片段，重疊 200 字元）→ 向量化 → 存入資料庫
-- 文件列表顯示、刪除（含確認對話框）
+- Drag-and-drop or click to upload PDF / TXT files (max 10 MB)
+- Dual PDF parsing for reliability: unpdf first, automatic fallback to pdf-parse on failure
+- Automatic pipeline on upload: text extraction → chunking (1000 chars/chunk, 200-char overlap) → vectorization → database storage
+- Document list display and deletion (with confirmation dialog)
 
-### RAG 問答
+### RAG Q&A
 
-1. 使用者輸入問題
-2. 問題向量化（gemini-embedding-001，3072 維度）
-3. 在 document_chunks 表進行餘弦相似度搜尋（閾值 > 0.5，最多 5 個）
-4. 將相關片段作為上下文送給 Gemini 2.5 Flash
-5. 串流回傳 AI 回答，附帶來源引用
+1. User enters a question
+2. Question is vectorized (gemini-embedding-001, 3072 dimensions)
+3. Cosine similarity search on the `document_chunks` table (threshold > 0.5, top 5 results)
+4. Relevant chunks are sent as context to Gemini 2.5 Flash
+5. AI response is streamed back with source citations
 
-### UI 特色
+### UI Highlights
 
-- 左右分欄設計（文件管理 40% / 問答 60%）
-- 深色 / 淺色模式切換（跟隨系統 / 手動切換）
-- 串流回應（打字機效果）
-- 來源引用可折疊查看
+- Split-panel layout (Document Management 40% / Q&A 60%)
+- Dark / light mode toggle (follows system preference / manual switch)
+- Streaming responses (typewriter effect)
+- Collapsible source citations
 
-## 注意事項
+## Notes
 
-- ⚠️ `.env` 包含 API 金鑰，請妥善保管，勿上傳至公開倉庫
-- ⚠️ 目前使用免費額度的 API Key，用量超過會回傳 503
-- 💡 `pgvector` 的 ivfflat 索引最多支援 2000 維度，3072 維度向量直接暴力搜尋（中小型應用足夠快速）
+- ⚠️ The `.env` file contains API keys — keep it secure and never push it to a public repository.
+- ⚠️ Currently using free-tier API keys; exceeding the quota will result in 503 errors.
+- 💡 The `pgvector` IVFFlat index supports up to 2000 dimensions; 3072-dimensional vectors use brute-force search instead (fast enough for small-to-medium applications).
