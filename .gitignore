@@ -1,0 +1,41 @@
+# v0 sandbox internal files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+.snowflake/
+.v0-trash/
+.vercel/
+next.user-config.*
+
+# Environment variables
+.env*
+
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+next-env.d.ts
+
+# Lock file (not using pnpm)
+pnpm-lock.yaml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# PROJECT_OVERVIEW.md
+PROJECT_OVERVIEW.md
+RAG Vibe Coding.pdf
+implementation_plan.md
+v0_prompt_final.md
+
+# windows powershell script
+start.ps1
